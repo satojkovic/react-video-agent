@@ -1,0 +1,22 @@
+# Secrets
+.env
+
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+.mypy_cache/
+
+# Generated / large data
+video_database/
+dvd_data/
+lvbench_videos
+video_info.meta.jsonl
+
+# Articles (out of project scope)
+article_draft.md
+article_en.md
+article_ja.md
+
+# IDE / workspace
+react-video-agent.code-workspace

@@ -9,8 +9,8 @@ from nano_vectordb import NanoVectorDB
 from tqdm import tqdm
 
 import src.config.settings as config
-from src.react.func_call_shema import doc as D
-from src.react.utils import AzureOpenAIEmbeddingService, call_openai_model_with_tools
+from src.utils.schema import doc as D
+from src.llm.openai import AzureOpenAIEmbeddingService, call_openai_model_with_tools
 
 
 def frame_inspect_tool(

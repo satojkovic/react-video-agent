@@ -3,7 +3,7 @@ import argparse
 import src.config.settings as config
 from src.react.agent import DVDCoreAgent
 from src.react.video_utils import decode_video_to_frames
-from src.react.utils import extract_answer
+from src.llm.openai import extract_answer
 
 from src.react.frame_caption import process_video
 

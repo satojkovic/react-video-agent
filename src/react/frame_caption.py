@@ -8,7 +8,7 @@ from typing import Dict, List, Tuple
 from tqdm import tqdm
 
 import src.config.settings as config
-from src.react.utils import call_openai_model_with_tools
+from src.llm.openai import call_openai_model_with_tools
 
 # --------------------------------------------------------------------------- #
 #                              Prompt templates                               #

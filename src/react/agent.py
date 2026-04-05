@@ -2,10 +2,10 @@ import src.config.settings as config
 from src.tools.build_database import (frame_inspect_tool,
                                       clip_search_tool,
                                       global_browse_tool, init_single_video_db)
-from src.react.func_call_shema import as_json_schema
-from src.react.utils import call_openai_model_with_tools
+from src.utils.schema import as_json_schema
+from src.llm.openai import call_openai_model_with_tools
 from typing import Annotated as A
-from src.react.func_call_shema import doc as D
+from src.utils.schema import doc as D
 import copy
 import json
 

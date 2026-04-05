@@ -3,10 +3,10 @@ from src.tools.frame_inspect import frame_inspect_tool
 from src.tools.clip_search import clip_search_tool
 from src.tools.global_browse import global_browse_tool
 from src.video.database import init_single_video_db
-from src.utils.schema import as_json_schema
-from src.llm.openai import call_openai_model_with_tools
+from src.utils.schema import as_json_schema, doc as D
+from src.llm.base import BaseLLM
+from src.llm.openai import OpenAILLM
 from typing import Annotated as A
-from src.utils.schema import doc as D
 import copy
 import json
 
@@ -21,7 +21,14 @@ def finish(answer: A[str, D("Answer to the user's question.")]) -> None:
 
 
 class DVDCoreAgent:
-    def __init__(self, video_db_path, video_caption_path, max_iterations):
+    def __init__(self, video_db_path, video_caption_path, max_iterations, llm: BaseLLM = None):
+        if llm is None:
+            llm = OpenAILLM(
+                endpoints=config.AOAI_ORCHESTRATOR_LLM_ENDPOINT_LIST,
+                model_name=config.AOAI_ORCHESTRATOR_LLM_MODEL_NAME,
+                api_key=config.OPENAI_API_KEY,
+            )
+        self.llm = llm
         self.tools = [frame_inspect_tool, clip_search_tool, global_browse_tool, finish]
         if config.LITE_MODE:
             self.tools.remove(frame_inspect_tool)
@@ -132,13 +139,10 @@ Question: QUESTION_PLACEHOLDER"""
                     }
                 )
 
-            response = call_openai_model_with_tools(
+            response = self.llm.call_with_tools(
                 msgs,
-                endpoints=config.AOAI_ORCHESTRATOR_LLM_ENDPOINT_LIST,
-                model_name=config.AOAI_ORCHESTRATOR_LLM_MODEL_NAME,
                 tools=self.function_schemas,
                 temperature=0.0,
-                api_key=config.OPENAI_API_KEY,
             )
             if response is None:
                 return None
@@ -197,13 +201,10 @@ Question: QUESTION_PLACEHOLDER"""
                 msgs.append(final_usr_msg)
                 # Don't yield user messages to the UI
 
-            response = call_openai_model_with_tools(
+            response = self.llm.call_with_tools(
                 msgs,
-                endpoints=config.AOAI_ORCHESTRATOR_LLM_ENDPOINT_LIST,
-                model_name=config.AOAI_ORCHESTRATOR_LLM_MODEL_NAME,
                 tools=self.function_schemas,
                 temperature=0.0,
-                api_key=config.OPENAI_API_KEY,
             )
             if response is None:
                 return

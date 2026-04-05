@@ -10,6 +10,7 @@ import cv2
 import requests
 from azure.identity import AzureCliCredential
 
+from src.llm.base import BaseLLM
 from src.utils.retry import retry_with_exponential_backoff
 
 
@@ -140,6 +141,42 @@ class AzureOpenAIEmbeddingService:
             return response.json()["data"]
         else:
             response.raise_for_status()
+
+
+class OpenAILLM(BaseLLM):
+    """Concrete LLM backend using OpenAI or Azure OpenAI."""
+
+    def __init__(
+        self,
+        endpoints,
+        model_name: str,
+        api_key: str = None,
+        embedding_endpoints=None,
+        embedding_model_name: str = None,
+    ):
+        self.endpoints = endpoints
+        self.model_name = model_name
+        self.api_key = api_key
+        self.embedding_endpoints = embedding_endpoints
+        self.embedding_model_name = embedding_model_name
+
+    def call_with_tools(self, messages: list, tools: list = None, **kwargs) -> dict:
+        return call_openai_model_with_tools(
+            messages,
+            endpoints=self.endpoints,
+            model_name=self.model_name,
+            api_key=self.api_key,
+            tools=tools or [],
+            **kwargs,
+        )
+
+    def get_embeddings(self, text) -> list:
+        return AzureOpenAIEmbeddingService.get_embeddings(
+            endpoints=self.embedding_endpoints,
+            model_name=self.embedding_model_name,
+            input_text=text,
+            api_key=self.api_key,
+        )
 
 
 def extract_answer(message: dict) -> str | None:

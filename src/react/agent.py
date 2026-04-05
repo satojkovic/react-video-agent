@@ -1,7 +1,8 @@
 import src.config.settings as config
-from src.tools.build_database import (frame_inspect_tool,
-                                      clip_search_tool,
-                                      global_browse_tool, init_single_video_db)
+from src.tools.frame_inspect import frame_inspect_tool
+from src.tools.clip_search import clip_search_tool
+from src.tools.global_browse import global_browse_tool
+from src.video.database import init_single_video_db
 from src.utils.schema import as_json_schema
 from src.llm.openai import call_openai_model_with_tools
 from typing import Annotated as A
